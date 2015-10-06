@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='ContactApp-view-details-Details'>/**
+</span> * This component uses {@link Ext.layout.container.Card} card layout, holds {@link ContactApp.view.details.View} Contact view and
+ * {@link ContactApp.view.details.Form} Contact Form.
+ *
+ * This view uses {@liink ContactApp.view.details.DetailsController} details view container.
+ */
+Ext.define(&#39;ContactApp.view.details.Details&#39;, {
+    extend: &#39;Ext.Container&#39;,
+
+    alias: &#39;widget.contact-details&#39;,
+
+    requires: [
+        &#39;ContactApp.view.details.DetailsController&#39;,
+        &#39;ContactApp.view.details.Form&#39;,
+        &#39;ContactApp.view.details.View&#39;,
+        &#39;Ext.container.Container&#39;,
+        &#39;Ext.layout.container.Card&#39;
+    ],
+
+<span id='ContactApp-view-details-Details-property-reference'>    reference: &#39;contact-details-container&#39;,
+</span>
+<span id='ContactApp-view-details-Details-property-layout'>    layout: {
+</span>        type: &#39;card&#39;
+    },
+
+<span id='ContactApp-view-details-Details-property-controller'>    controller: &#39;details&#39;,
+</span>
+<span id='ContactApp-view-details-Details-property-items'>    items: [
+</span>        {
+            xtype: &#39;container&#39;,
+            html: &#39;&lt;div class=&quot;no-contact-selected&quot;&gt;Select a contact from list &lt;/div&gt;&#39;,
+            reference: &#39;contact-no-selection&#39;
+        },
+        {
+            xtype: &#39;contact-view&#39;
+        },
+        {
+            xtype: &#39;contact-form&#39;
+        }
+    ],
+
+<span id='ContactApp-view-details-Details-property-listeners'>    listeners: {
+</span>        afterrender: &#39;initializeConfigs&#39;
+    }
+});</pre>
+</body>
+</html>

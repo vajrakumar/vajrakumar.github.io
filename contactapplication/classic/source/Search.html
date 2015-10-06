@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='ContactApp-ux-Search'>/**
+</span> * This ux component is used for perform local search on every key press it fires an event &#39;search&#39;.
+ */
+Ext.define(&#39;ContactApp.ux.Search&#39;, {
+    extend: &#39;Ext.form.field.Text&#39;,
+
+    alias: &#39;widget.search-field&#39;,
+
+<span id='ContactApp-ux-Search-property-validationEvent'>    validationEvent: false,
+</span><span id='ContactApp-ux-Search-property-validateOnBlur'>    validateOnBlur: false,
+</span><span id='ContactApp-ux-Search-property-enableKeyEvents'>    enableKeyEvents: true,
+</span>
+<span id='ContactApp-ux-Search-property-listeners'>    listeners: {
+</span>        keyup: function(comp, eve){
+            var val = comp.getValue(),
+                clearTrigger = comp.triggers.clear;
+
+            //Hide clear trigger if there is no text in search field.
+            clearTrigger.setVisible(!Ext.isEmpty(val));
+
+            comp.fireEvent(&#39;search&#39;, comp, eve);
+        },
+
+<span id='ContactApp-ux-Search-event-search'>        /**
+</span>         * @event search
+         * Fires when user start entering text.
+         * @param {Ext.form.field.Text} comp Textfield where text is entered.
+         * @param eve {Ext.Event} event Event Object.
+         */
+        search: Ext.emptyFn
+    },
+
+<span id='ContactApp-ux-Search-property-triggers'>    /**
+</span>     * Triggers to perform search operation and clear search text.
+     */
+    triggers: {
+<span id='ContactApp-ux-Search-property-clear'>        /**
+</span>         * Trigger used to clear search.
+         */
+        clear: {
+            cls: &#39;x-form-clear-trigger&#39;,
+            //Handler to clear the filter
+            handler: function (textField, triggerComp, eve) {
+                textField.setValue(&quot;&quot;);
+                triggerComp.hide();
+                textField.fireEvent(&#39;search&#39;, textField, eve);
+            },
+            hidden: true
+        },
+<span id='ContactApp-ux-Search-property-search'>        /**
+</span>         * Trigger to perform search.
+         */
+        search: {
+            cls: &#39;x-form-search-trigger&#39;,
+            //handler to perform filter of contact
+            handler: function (textField, triggerComp, eve) {
+                textField.fireEvent(&#39;searchcontact&#39;, textField, eve);
+            }
+        }
+    }
+});</pre>
+</body>
+</html>

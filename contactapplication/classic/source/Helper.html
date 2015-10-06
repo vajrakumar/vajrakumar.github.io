@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='ContactApp-utils-Helper'>/**
+</span> *  This is a Helper class which contains generic and reusable code which are independent of Ext components.
+ */
+Ext.define(&#39;ContactApp.utils.Helper&#39;, {
+
+    singleton: true,
+
+<span id='ContactApp-utils-Helper-method-scaleImage'>    /**
+</span>     * This method is used to scale the image based on the width and height of the parent container or .
+     * @param imageObj {Object} Image dom object for which scaling has to be done.
+     * @param targetwidth {Number} width of the parent Container / fixed width
+     * @param targetheight height of the parent Container / fixed width.
+     * @param isLetterBox  false for zooming of image.
+     */
+    scaleImage: function (imageObj, targetwidth, targetheight, isLetterBox) {
+
+        var width = 0,
+            height = 0,
+            scaleX1 = targetwidth,
+            scaleY1 = (imageObj.height * targetwidth) / imageObj.width,
+            scaleX2 = (imageObj.width * targetheight) / imageObj.height,
+            scaleY2 = targetheight,
+            fScaleOnWidth = scaleX2 &gt; targetwidth;
+
+        if (fScaleOnWidth) {
+            fScaleOnWidth = isLetterBox;
+        }
+        else {
+            fScaleOnWidth = !isLetterBox;
+        }
+
+        if (fScaleOnWidth) {
+            width = Math.floor(scaleX1);
+            height = Math.floor(scaleY1);
+        }
+        else {
+            width = Math.floor(scaleX2);
+            height = Math.floor(scaleY2);
+        }
+
+        imageObj.style.left = (Math.floor((targetwidth - width) / 2)) + &#39;px&#39;;
+        imageObj.style.top = (Math.floor((targetheight - height) / 2)) + &#39;px&#39;;
+
+        imageObj.style.width = width + &#39;px&#39;;
+        imageObj.style.height = height + &#39;px&#39;;
+    },
+
+<span id='ContactApp-utils-Helper-method-isStoreModified'>    /**
+</span>     * This method is used to check if the store is modified or not.
+     * @param store
+     * @returns {boolean}
+     */
+    isStoreModified: function (store) {
+        if (store) {
+            var modifiedRecordsCount = store.getModifiedRecords().length,
+                deletedRecordsCount = store.getRemovedRecords().length;
+
+            return (modifiedRecordsCount + deletedRecordsCount) &gt; 0;
+        }
+        else {
+            return false;
+        }
+    }
+
+});</pre>
+</body>
+</html>

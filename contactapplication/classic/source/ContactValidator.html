@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='ContactApp-validator-ContactValidator'>/**
+</span> * This class is used to validate cotnacts fields
+ */
+Ext.define(&#39;ContactApp.validator.ContactValidator&#39;, {
+
+    extend: &#39;Ext.data.validator.Validator&#39;,
+
+    alias: &#39;data.validator.contact&#39;,
+
+<span id='ContactApp-validator-ContactValidator-property-message'>    message: &#39;This is not a valid contact field&#39;,
+</span>
+    requires: [
+        &#39;ContactApp.validator.Url&#39;,
+        &#39;Ext.data.validator.Email&#39;,
+        &#39;Ext.data.validator.Length&#39;
+    ],
+
+    config: {
+<span id='ContactApp-validator-ContactValidator-cfg-Empty'>        /**
+</span>         * @cfg {string} Empty field Message
+         */
+        emptyMessage: &#39;Must not be Empty&#39;,
+
+<span id='ContactApp-validator-ContactValidator-cfg-Invalid'>        /**
+</span>         * @cfg {string} Invalid date message
+         */
+        invalidDateMsg: &#39;Please enter Valid Date&#39;,
+
+<span id='ContactApp-validator-ContactValidator-cfg-Invalid'>        /**
+</span>         * @cfg {string} Invalid email message
+         */
+        invalidEmailMsg: &#39;The specified email value \&#39;{0} \&#39;  must be of the format \&#39;abc@xyz.com \&#39;&#39;,
+
+<span id='ContactApp-validator-ContactValidator-cfg-Invalid'>        /**
+</span>         * @cfg {string} Invalid url Message
+         */
+        invalidWebSiteMsg: &#39;The specified Website value \&#39;{0}\&#39; should be of the format \&#39;http://www.xyz.com\&#39; or \&#39;https://www.xyz.com\&#39; or \&#39;fttp://xyz.com\&#39;&#39;,
+
+<span id='ContactApp-validator-ContactValidator-cfg-Invalid'>        /**
+</span>         * @cfg {string} Invalid phone number message
+         */
+        invalidPhoneNumber: &#39;Phone number must be of the format +919686676665 / (080)-23350188 / +1 (760) 569-7676&#39;
+    },
+
+<span id='ContactApp-validator-ContactValidator-method-validate'>    /**
+</span>     * This method is used to validate fields based on the viewType field
+     * @param {String} value field value
+     * @param {Ext.data.model} record Data model
+     * @returns {String/Boolean} Returns error message or true
+     */
+    validate: function(value, record) {
+        var me = this;
+
+        var viewType = record.get(&#39;viewType&#39;),
+            value = Ext.isString(value)? Ext.String.trim(value): value;
+
+        switch (viewType) {
+            case &#39;phone&#39;:
+                if (value.length === 0 &amp;&amp; /^[ 0-9()+-]*$/i.test(value) === false) {
+                    return me.getInvalidPhoneNumber();
+                }
+
+                break;
+            case &#39;email&#39;:
+                return Ext.create(&#39;Ext.data.validator.Email&#39;, {
+                    message: Ext.String.format(me.getInvalidEmailMsg(), value)
+                }).validate(Ext.String.trim(value));
+                break;
+            case &#39;url&#39;:
+                return Ext.create(&#39;ContactApp.validator.Url&#39;, {
+                    message: Ext.String.format(me.getInvalidWebSiteMsg(), value)
+                }).validate(Ext.String.trim(value));
+                break;
+            case &#39;date&#39;:
+                if (!Ext.isDate(new Date(value))) {
+                    return me.getInvalidDateMsg();
+                }
+                break;
+        }
+
+        return true;
+    }
+});</pre>
+</body>
+</html>

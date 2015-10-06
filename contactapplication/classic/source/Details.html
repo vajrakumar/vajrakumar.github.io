@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='ContactApp-model-Details'>/**
+</span> * This model is used to hold information like Phone Number, Emails, websites and Important Dates (currently in future it can be used for adding new
+ * fields also).
+ */
+
+Ext.define(&#39;ContactApp.model.Details&#39;, {
+    extend: &#39;ContactApp.model.Base&#39;,
+
+    requires: [
+        &#39;ContactApp.utils.UrlMapping&#39;,
+        &#39;ContactApp.validator.ContactValidator&#39;,
+        &#39;Ext.data.proxy.Rest&#39;
+    ],
+
+<span id='ContactApp-model-Details-property-fields'>    fields: [
+</span><span id=''>    /**
+</span>     *  Identifier
+     */
+<span id='-property-name'>        {name: &#39;id&#39;},
+</span>
+<span id=''>    /**
+</span>     *  Foreign key for Contact user Model
+     */
+<span id='-property-allowBlank'><span id='-property-name'>        {name: &#39;contactId&#39;, allowBlank: false},
+</span></span>
+        //Type of view (i.e phone-&gt;Phone Number, email-&gt;Emails, url-&gt;Websites and date-&gt; Important Dates
+
+<span id=''>    /**
+</span>     *  Represent type of contact information. Currently it supports phoneNumbers, emails, urls and dates
+     */
+<span id='-property-type'><span id='-property-name'>        {name: &#39;viewType&#39;, type: &#39;string&#39;},
+</span></span>        // Label names
+
+<span id=''>    /**
+</span>     * Represents the custom title of the contact field
+     */
+<span id='-property-type'><span id='-property-name'>        {name: &#39;type&#39;, type: &#39;string&#39;},
+</span></span>
+<span id=''>    /**
+</span>     * Stores the value of the contact like phone number&#39;s, email-id&#39;s, website names and important dates.
+     */
+        {
+<span id='-property-name'>            name: &#39;value&#39;,
+</span><span id='-method-convert'>            convert: function(value, rec){
+</span>                if(rec.get(&#39;viewType&#39;) === &#39;date&#39;)
+                {
+                    value = new Date(value);
+                }
+                return value;
+            }
+        }
+    ],
+
+<span id='-method-customValidate'>    /**
+</span>     * This method is used to perform custom validation on passed value. It internally uses  {@link ContactApp.validator.ContactValidator}
+     * @param value {Object} value
+     * @returns {String|Boolean} true if the value is valid. A string may be returned if the value is not valid, to indicate an error message.
+     */
+    customValidate: function(value){
+        var contactValidator = Ext.create(&#39;ContactApp.validator.ContactValidator&#39;);
+        return contactValidator.validate(value, this);
+    },
+
+<span id='-property-proxy'>    /**
+</span>     * Rest proxy
+     */
+    proxy: {
+        type: &#39;rest&#39;,
+        url: ContactApp.utils.UrlMapping.contactType
+    }
+});</pre>
+</body>
+</html>

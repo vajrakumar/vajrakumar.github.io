@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='ContactApp-model-Base'>/**
+</span> * Base model for all models across Contact application. This model by default sets identifier fields to negative value
+ * for newly created records.
+ */
+Ext.define(&#39;ContactApp.model.Base&#39;, {
+
+    extend: &#39;Ext.data.Model&#39;,
+
+    requires: [
+        &#39;Ext.data.identifier.Negative&#39;
+    ],
+
+<span id='ContactApp-model-Base-property-identifier'>    /**
+</span>     * Negative id&#39;s for newly created Records.
+     */
+    identifier: &#39;negative&#39;
+});</pre>
+</body>
+</html>

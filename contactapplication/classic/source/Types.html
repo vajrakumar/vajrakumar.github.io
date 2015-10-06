@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='ContactApp-view-details-Types'>/**
+</span> * This view is used to add or delete multi field contact details  like for phone number, website, email and important dates.
+ * This uses {@link Ext.grid.plugin.CellEditing} cell editing plugin.
+ */
+Ext.define(&#39;ContactApp.view.details.Types&#39;, {
+    extend: &#39;Ext.grid.Panel&#39;,
+
+    alias: &#39;widget.contact-type&#39;,
+
+    requires: [
+        &#39;Ext.button.Button&#39;,
+        &#39;Ext.form.field.Date&#39;,
+        &#39;Ext.form.field.Text&#39;,
+        &#39;Ext.grid.column.Action&#39;,
+        &#39;Ext.grid.column.Column&#39;,
+        &#39;Ext.grid.column.Date&#39;,
+        &#39;Ext.grid.plugin.CellEditing&#39;,
+        &#39;Ext.toolbar.Fill&#39;,
+        &#39;Ext.toolbar.Separator&#39;
+    ],
+
+<span id='ContactApp-view-details-Types-property-plugins'>    plugins: {
+</span>        ptype: &#39;cellediting&#39;,
+        clicksToEdit: 1,
+        pluginId: &#39;contact-type-cell-edit-plugin&#39;
+    },
+
+    config: {
+<span id='ContactApp-view-details-Types-cfg-contacttype'>        /**
+</span>         * @cfg contacttype
+         * Type of contact like phone number, website, email and important dates.
+         */
+        contactType: null
+    },
+
+<span id='ContactApp-view-details-Types-property-hideHeaders'>    hideHeaders: true,
+</span>
+<span id='ContactApp-view-details-Types-property-bbar'>    bbar: [
+</span>        &#39;-&gt;&#39;,
+        {
+            xtype: &#39;button&#39;,
+            iconCls: &#39;fa fa-plus&#39;,
+            handler: &#39;addNewContactDetail&#39;
+        }
+    ],
+
+<span id='ContactApp-view-details-Types-property-layout'>    layout: {
+</span>        type: &#39;fit&#39;
+    },
+
+
+<span id='ContactApp-view-details-Types-method-initComponent'>    initComponent: function() {
+</span>        var me = this;
+
+        me.setContactType(me.contactType);
+
+        me.columns = me.buildColumns();
+
+        me.callParent(arguments);
+    },
+
+<span id='ContactApp-view-details-Types-method-buildColumns'>    /**
+</span>     * Builds the column based on the contact type.
+     * @returns {Array} column Returns list of columns config.
+     */
+    buildColumns: function() {
+        var me = this,
+            columns = [];
+
+
+        columns.push({
+            xtype: &#39;gridcolumn&#39;,
+            dataIndex: &#39;type&#39;,
+            flex:.45,
+            editor: {
+                xtype: &#39;textfield&#39;,
+                allowBlank: false
+            }
+        });
+
+
+        switch (me.getContactType()) {
+
+            case &#39;phoneNumbers&#39;:
+
+                columns.push(
+                    {
+                        xtype: &#39;gridcolumn&#39;,
+                        dataIndex: &#39;value&#39;,
+                        flex:.45,
+                        editor: {
+                            xtype: &#39;textfield&#39;,
+                            allowBlank: false,
+                            maskRe: /^[ 0-9()+-]*$/i,
+                            allowOnlyWhitespace: false
+                        }
+                    }
+                );
+                break;
+
+            case  &#39;emails&#39;:
+
+                columns.push(
+                    {
+                        xtype: &#39;gridcolumn&#39;,
+                        dataIndex: &#39;value&#39;,
+                        flex:.45,
+                        editor: {
+                            xtype: &#39;textfield&#39;,
+                            allowBlank: false,
+                            vtype: &#39;email&#39;,
+                            vTypeText: &#39;Email should be of the format  xyz@xyz.com&#39;
+                        }
+                    }
+                );
+                break;
+
+            case &#39;urls&#39;:
+
+                columns.push(
+                    {
+                        xtype: &#39;gridcolumn&#39;,
+                        dataIndex: &#39;value&#39;,
+                        flex:.45,
+                        editor: {
+                            xtype: &#39;textfield&#39;,
+                            allowBlank: false,
+                            vtype: &#39;url&#39;,
+                            vTypeText: &#39;Url should be of the format  http://xyz.com&#39;
+                        }
+                    }
+                );
+                break;
+
+            case &#39;dates&#39;:
+                columns.push(
+                    {
+                        xtype: &#39;datecolumn&#39;,
+                        dataIndex: &#39;value&#39;,
+                        format: &#39;M d, Y&#39;,
+                        flex:.45,
+                        editor: {
+                            xtype: &#39;datefield&#39;,
+                            allowBlank: false,
+                            format: &#39;M d, Y&#39;
+                        },
+                        renderer: function (value) {
+                            if (isNaN(Date.parse(value)) === false) {
+                                return Ext.Date.format(new Date(value), &#39;M d, Y&#39;);
+                            }
+                            else {
+                                return value;
+                            }
+                        }
+                    }
+                );
+                break;
+        }
+
+        columns.push(
+            {
+                xtype: &#39;actioncolumn&#39;,
+                width: 30,
+                items: [
+                    {
+                        glyph: &#39;&amp;#xf1f8;&#39;,
+                        handler: function (view, rowIndex, colIndex, btn, eve, rec) {
+                            view.getStore().remove(rec);
+                        }
+                    }
+                ]
+            }
+        );
+
+        return columns;
+    }
+
+});</pre>
+</body>
+</html>
