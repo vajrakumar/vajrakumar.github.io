@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='ContactApp-view-details-Form'>/**
+</span> * Created by manjunathub on 28/09/15.
+ */
+Ext.define(&#39;ContactApp.view.details.Form&#39;, {
+    extend: &#39;Ext.form.Panel&#39;,
+    requires: [
+        &#39;ContactApp.view.details.Avatar&#39;,
+        &#39;ContactApp.view.details.TypeView&#39;,
+        &#39;Ext.field.Number&#39;,
+        &#39;Ext.field.Text&#39;,
+        &#39;Ext.form.FieldSet&#39;,
+        &#39;Ext.layout.Fit&#39;,
+        &#39;Ext.layout.HBox&#39;,
+        &#39;Ext.layout.VBox&#39;
+    ],
+
+    alias: &#39;widget.contact-form&#39;,
+<span id='ContactApp-view-details-Form-property-reference'>    reference: &#39;contact-form&#39;,
+</span>
+<span id='ContactApp-view-details-Form-property-items'>    items: [
+</span>        {
+            xtype: &#39;toolbar&#39;,
+            docked: &#39;top&#39;,
+            border: false,
+            items: [
+                {
+                    xtype: &#39;button&#39;,
+                    iconCls: &#39;fa fa-arrow-left&#39;,
+                    ui: &#39;normal&#39;,
+                    handler: &#39;rejectChanges&#39;
+                },
+                {
+                    xtype: &#39;spacer&#39;
+                },
+                {
+                    xtype: &#39;button&#39;,
+                    iconCls: &#39;fa fa-floppy-o&#39;,
+                    ui: &#39;normal&#39;,
+                    handler: &#39;saveContact&#39;
+                }
+            ]
+        },
+        {
+            xtype: &#39;avatar&#39;,
+            listeners: {
+                onfileselect: &#39;uploadAvatar&#39;
+            }
+        },
+        {
+            xtype: &#39;fieldset&#39;,
+            title: &#39;Personal Information&#39;,
+            items: [
+                {
+                    xtype: &#39;container&#39;,
+                    cls: &#39;x-form-fieldset x-field&#39;,
+                    layout: {
+                        type: &#39;hbox&#39;,
+                        align: &#39;stretch&#39;
+                    },
+                    margin: 0,
+                    //width: &#39;100%&#39;,
+                    items: [
+                        {
+                            xtype: &#39;label&#39;,
+                            html: &#39;Name&#39;,
+                            cls: &#39;x-form-label&#39;,
+                            width: &#39;30%&#39;
+                        },
+                        {
+                            xtype: &#39;container&#39;,
+                            width: &#39;70%&#39;,
+                            layout: {
+                                type: &#39;vbox&#39;,
+                                align: &#39;stretch&#39;
+                            },
+                            items: [
+                                {
+                                    xtype: &#39;textfield&#39;,
+                                    width: &#39;100%&#39;,
+                                    name: &#39;prefix&#39;,
+                                    placeHolder: &#39;Prefix&#39;,
+                                    bind: &#39;{selectedContact.prefix}&#39;
+                                },
+                                {
+                                    xtype: &#39;textfield&#39;,
+                                    width: &#39;100%&#39;,
+                                    name: &#39;firstName&#39;,
+                                    allowOnlyWhitespace: false,
+                                    placeHolder: &#39;First Name&#39;,
+                                    bind: &#39;{selectedContact.firstName}&#39;
+                                },
+                                {
+                                    xtype: &#39;textfield&#39;,
+                                    width: &#39;100%&#39;,
+                                    name: &#39;middleName&#39;,
+                                    placeHolder: &#39;Middle Name&#39;,
+                                    bind: &#39;{selectedContact.middleName}&#39;
+                                },
+                                {
+                                    xtype: &#39;textfield&#39;,
+                                    width: &#39;100%&#39;,
+                                    name: &#39;lastName&#39;,
+                                    placeHolder: &#39;Last Name&#39;,
+                                    bind: &#39;{selectedContact.lastName}&#39;
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    xtype: &#39;textfield&#39;,
+                    label: &#39;Organization&#39;,
+                    name: &#39;organization&#39;,
+                    placeHolder: &#39;Add Organization&#39;,
+                    bind: &#39;{selectedContact.organization}&#39;
+                },
+                {
+                    xtype: &#39;textfield&#39;,
+                    label: &#39;Designation&#39;,
+                    name: &#39;designation&#39;,
+                    placeHolder: &#39;Add Designation&#39;,
+                    bind: &#39;{selectedContact.designation}&#39;
+                }
+            ]
+        },
+        {
+            xtype: &#39;fieldset&#39;,
+            title: &#39;Address&#39;,
+            items: [
+                {
+                    xtype: &#39;textfield&#39;,
+                    label: &#39;Address 1&#39;,
+                    placeHolder: &#39;Street Address&#39;,
+                    name: &#39;streetAddress&#39;,
+                    bind: &#39;{selectedContact.streetAddress}&#39;
+
+                },
+                {
+                    xtype: &#39;textfield&#39;,
+                    label: &#39;Address 2&#39;,
+                    placeHolder: &#39;Extended Address&#39;,
+                    name: &#39;extendedAddress&#39;,
+                    bind: &#39;{selectedContact.extendedAddress}&#39;
+                },
+
+                {
+                    xtype: &#39;textfield&#39;,
+                    label: &#39;City&#39;,
+                    placeHolder: &#39;City&#39;,
+                    name: &#39;city&#39;,
+                    padding: &#39;0 5 0 0&#39;,
+                    bind: &#39;{selectedContact.city}&#39;
+                },
+                {
+                    xtype: &#39;numberfield&#39;,
+                    label: &#39;Pincode&#39;,
+                    placeHolder: &#39;Pincode&#39;,
+                    name: &#39;pincode&#39;,
+                    hideTrigger: true,
+                    keyNavEnabled: false,
+                    mouseWheelEnabled: false,
+                    bind: &#39;{selectedContact.pincode}&#39;
+                },
+                {
+                    xtype: &#39;textfield&#39;,
+                    label: &#39;State&#39;,
+                    placeHolder: &#39;State&#39;,
+                    name: &#39;state&#39;,
+                    bind: &#39;{selectedContact.state}&#39;
+                },
+                {
+                    xtype: &#39;textfield&#39;,
+                    label: &#39;Country&#39;,
+                    placeHolder: &#39;Country&#39;,
+                    name: &#39;country&#39;,
+                    bind: &#39;{selectedContact.country}&#39;
+                }
+            ]
+        },
+        {
+            xtype: &#39;fieldset&#39;,
+            title: &#39;Phone and Fax&#39;,
+            items: [
+                {
+                    xtype: &#39;contact-type&#39;,
+                    contactType: &#39;phoneNumbers&#39;,
+                    viewType: &#39;phone&#39;,
+                    bind: {
+                        store: &#39;{selectedContact.phoneNumbers}&#39;
+                    }
+                },
+                {
+                    xtype: &#39;button&#39;,
+                    text: &#39;Add New&#39;,
+                    ui: &#39;normal&#39;,
+                    margin: 1,
+                    handler: &#39;addContactDetails&#39;
+
+                }
+            ]
+        },
+        {
+            xtype: &#39;fieldset&#39;,
+            title: &#39;Emails&#39;,
+            items: [
+                {
+                    xtype: &#39;contact-type&#39;,
+                    contactType: &#39;emails&#39;,
+                    bind: {
+                        store: &#39;{selectedContact.emails}&#39;
+                    },
+                    viewType: &#39;email&#39;
+                },
+                {
+                    xtype: &#39;button&#39;,
+                    text: &#39;Add New&#39;,
+                    ui: &#39;normal&#39;,
+                    margin: 1,
+                    handler: &#39;addContactDetails&#39;
+
+                }
+            ]
+        },
+        {
+            xtype: &#39;fieldset&#39;,
+            title: &#39;Web Pages&#39;,
+            items: [
+                {
+                    xtype: &#39;contact-type&#39;,
+                    contactType: &#39;urls&#39;,
+                    viewType: &#39;url&#39;,
+                    bind: {
+                        store: &#39;{selectedContact.urls}&#39;
+                    }
+                },
+                {
+                    xtype: &#39;button&#39;,
+                    text: &#39;Add New&#39;,
+                    ui: &#39;normal&#39;,
+                    margin: 1,
+                    handler: &#39;addContactDetails&#39;
+
+                }
+            ]
+        },
+        {
+            xtype: &#39;fieldset&#39;,
+            title: &#39;Important Dates&#39;,
+            items: [
+                {
+                    xtype: &#39;contact-type&#39;,
+                    contactType: &#39;dates&#39;,
+                    viewType: &#39;date&#39;,
+                    bind: {
+                        store: &#39;{selectedContact.dates}&#39;
+                    }
+                },
+                {
+                    xtype: &#39;button&#39;,
+                    text: &#39;Add New&#39;,
+                    ui: &#39;normal&#39;,
+                    margin: 1,
+                    handler: &#39;addContactDetails&#39;
+                }
+            ]
+        }
+    ]
+});</pre>
+</body>
+</html>

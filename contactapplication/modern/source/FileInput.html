@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='ContactApp-field-FileInput'>/**
+</span> * Created by vajra on 01/10/15.
+ * Override created to avoid 2 times firing of change event for filefield.
+ * Jira ID: link url https://sencha.jira.com/browse/EXTJS-19443
+ */
+
+Ext.define(&#39;ContactApp.field.FileInput&#39;,{
+    override : &#39;Ext.field.FileInput&#39;,
+<span id='ContactApp-field-FileInput-method-doBlur'>    doBlur: function(e) {
+</span>        this.showMask();
+        this.setIsFocused(false);
+    }
+});</pre>
+</body>
+</html>

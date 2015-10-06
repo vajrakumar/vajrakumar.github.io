@@ -16,21 +16,17 @@
 </head>
 <body onload="prettyPrint(); highlight();">
   <pre class="prettyprint lang-js"><span id='ContactApp-view-details-Avatar'>/**
-</span> *  This component is used to show profile picture(Avatar) and on click of the image or glyph icon to upload file to profile picture.
+</span> * This component is used to show profile picture(Avatar) and on click of the image or glyph icon to upload file to profile picture.
  */
 Ext.define(&#39;ContactApp.view.details.Avatar&#39;, {
     extend: &#39;Ext.form.Panel&#39;,
 
-    requires: [
-        &#39;Ext.container.Container&#39;,
-        &#39;Ext.form.field.File&#39;
-    ],
-
     alias: &#39;widget.avatar&#39;,
 
-<span id='ContactApp-view-details-Avatar-property-bodyStyle'>    bodyStyle: {
-</span>        background: &#39;transparent&#39;
-    },
+    requires: [
+        &#39;Ext.field.File&#39;,
+        &#39;Ext.layout.Fit&#39;
+    ],
 
 <span id='ContactApp-view-details-Avatar-property-items'>    items: [
 </span>        {
@@ -39,45 +35,29 @@ Ext.define(&#39;ContactApp.view.details.Avatar&#39;, {
              * displays glyph icon.
              */
             xtype: &#39;container&#39;,
-            margin: 10,
-            width: 135,
-            height: 135,
             tpl: Ext.create(&#39;Ext.XTemplate&#39;, [
-                &#39;&lt;div class=&quot;thumb-wrap&quot; &gt;&#39;,
-                &#39;&lt;div class=&quot;thumb&quot;&gt;&#39;,
+                &#39;&lt;div class=&quot;modern-thumb-wrap&quot; &gt;&#39;,
+                &#39;&lt;div class=&quot;modern-thumb&quot;&gt;&#39;,
                 &#39;&lt;tpl if = &quot;Ext.isEmpty(values.imageUrl)&quot;&gt;&#39;,
                 &#39;&lt;i class=&quot;fa fa-user fa-4x&quot;&gt;&lt;/i&gt;&#39;,
                 &#39;&lt;tpl else&gt;&#39;,
-                &#39;&lt;img src=&quot;{imageUrl}&quot;  onload=&quot;ContactApp.utils.Helper.scaleImage(this, 120, 120, false)&quot; /&gt;&#39;,
+                &#39;&lt;img src=&quot;{imageUrl}&quot; width=&quot;100%&quot; height=&quot;100%&quot; /&gt;&#39;,
                 &#39;&lt;/tpl&gt;&#39;,
-                &#39;&lt;div style=&quot;width:30px; height: 30px;display: none&quot;&gt;&lt;i class=&quot;fa fa-close&quot;&gt;&lt;/i&gt;&lt;/div&gt;&#39;,
-                &#39;&lt;div style=&quot;width:30px; height: 30px;display: none;&quot;&gt;&lt;i class=&quot;fa fa-pencil&quot;&gt;&lt;/i&gt;&lt;/div&gt;&#39;,
+                &#39;&lt;span style=&quot;display: none&quot;&gt;&lt;i class=&quot;fa fa-close&quot;&gt;&lt;/i&gt;&lt;/span&gt;&#39;,
+                &#39;&lt;span style=&quot;display: none&quot;&gt;&lt;i class=&quot;fa fa-pencil&quot;&gt;&lt;/i&gt;&lt;/span&gt;&#39;,
                 &#39;&lt;/div&gt;&#39;,
                 &#39;&lt;/div&gt;&#39;
             ]),
+            layout: {
+                type: &#39;fit&#39;
+            },
+
             reference: &#39;avatar-viewer&#39;,
             bind: {
                 data: {
                     bindTo: &#39;{selectedContact}&#39;,
                     deep: true
                 }
-            },
-            listeners: {
-                afterrender: function (comp) {
-                    var from = comp.up(&#39;avatar&#39;);
-                    comp.getEl().on({
-                        click: function () {
-                            from.showFileViewer();
-                        },
-                        mouseover: function () {
-
-                        },
-                        mouseout: function () {
-
-                        }
-                    })
-                },
-                uploadavatar: Ext.emptyFn
             }
         },
         {
@@ -87,47 +67,33 @@ Ext.define(&#39;ContactApp.view.details.Avatar&#39;, {
             xtype: &#39;filefield&#39;,
             reference: &#39;avataruploader&#39;,
             listeners: {
-                change: function (comp, value) {
+                change: function(comp, value){
                     var form = comp.up(&#39;avatar&#39;);
-                    if (!Ext.isEmpty(value)) {
-                        if (/(.jpg|.jpeg|.png|.gif)$/ig.test(value)) {
+                    if(!Ext.isEmpty(value)){
+                        if(/(.jpg|.jpeg|.png|.gif)$/ig.test(value)){
                             form.fireEvent(&#39;onfileselect&#39;, form);
                         }
                         else {
-                            Ext.Msg.show({
+                            Ext.toast({
                                 title: &#39;File Format error&#39;,
                                 message: &#39;Invalid file format, please upload files with the formats JPEG, JPG, PNG and GIF&#39;,
-                                buttons: Ext.Msg.OK,
-                                icon: Ext.Msg.ERROR
+                                timeout: 3000
                             });
                             comp.setValue(&#39;&#39;);
                         }
                     }
                 }
             },
-            name: &#39;avatar&#39;,
-            hidden: true
+            name: &#39;avatar&#39;
+
+<span id='ContactApp-view-details-Avatar-event-onfileselect'>            /**
+</span>             * @event onfileselect
+             * @param {ContactApp.view.details.Avatar} form Form used to upload perform file upload.
+             */
         }
     ],
-
 <span id='ContactApp-view-details-Avatar-property-listeners'>    listeners: {
-</span><span id='ContactApp-view-details-Avatar-event-onfileselect'>        /**
-</span>         * @event onfileselect
-         * @param {ContactApp.view.details.Avatar} form Form used to upload perform file upload.
-         */
-        onfileselect: Ext.emptyFn
-    },
-
-<span id='ContactApp-view-details-Avatar-method-showFileViewer'>    /**
-</span>     * Shows file browse menu.
-     */
-    showFileViewer: function () {
-
-        var me = this,
-            form = me.getForm(),
-            fileField = form.findField(&#39;avatar&#39;);
-
-        fileField.fileInputEl.dom.click();
+</span>        onfileselect: Ext.emptyFn
     }
 });</pre>
 </body>

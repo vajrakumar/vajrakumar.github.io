@@ -17,38 +17,36 @@
 <body onload="prettyPrint(); highlight();">
   <pre class="prettyprint lang-js"><span id='ContactApp-view-details-Details'>/**
 </span> * This component uses {@link Ext.layout.container.Card} card layout, holds {@link ContactApp.view.details.View} Contact view and
- * {@link ContactApp.view.details.Form} Contact Form.
+ * {@link ContactApp.view.details.Form} Contact Form. This is uses {@link Ext.Sheet} Sheet Component.
  *
- * This view uses {@liink ContactApp.view.details.DetailsController} details view container.
+ * When this component is rendered `initialize` event is fired.
  */
 Ext.define(&#39;ContactApp.view.details.Details&#39;, {
-    extend: &#39;Ext.Container&#39;,
-
-    alias: &#39;widget.contact-details&#39;,
+    extend: &#39;Ext.Sheet&#39;,
 
     requires: [
         &#39;ContactApp.view.details.DetailsController&#39;,
         &#39;ContactApp.view.details.Form&#39;,
         &#39;ContactApp.view.details.View&#39;,
-        &#39;Ext.container.Container&#39;,
-        &#39;Ext.layout.container.Card&#39;
+        &#39;Ext.layout.Card&#39;
     ],
 
-<span id='ContactApp-view-details-Details-property-reference'>    reference: &#39;contact-details-container&#39;,
-</span>
-<span id='ContactApp-view-details-Details-property-layout'>    layout: {
-</span>        type: &#39;card&#39;
-    },
+    alias: &#39;widget.contact-details&#39;,
 
-<span id='ContactApp-view-details-Details-property-controller'>    controller: &#39;details&#39;,
+<span id='ContactApp-view-details-Details-property-enter'>    enter:&#39;right&#39;,
+</span><span id='ContactApp-view-details-Details-property-exit'>    exit:&#39;right&#39;,
+</span><span id='ContactApp-view-details-Details-property-centered'>    centered: false,
+</span><span id='ContactApp-view-details-Details-property-stretchY'>    stretchY: true,
+</span><span id='ContactApp-view-details-Details-property-stretchX'>    stretchX: true,
 </span>
-<span id='ContactApp-view-details-Details-property-items'>    items: [
+<span id='ContactApp-view-details-Details-property-layout'>    layout:&#39;card&#39;,
+</span>
+<span id='ContactApp-view-details-Details-property-controller'><span id='ContactApp-view-details-Details-property-margin'>    margin:-8, // To avoid white boundary space outside of sheet, to make it fullscreen
+</span></span>
+    controller: &#39;details&#39;,
+
+<span id='ContactApp-view-details-Details-property-items'>    items:[
 </span>        {
-            xtype: &#39;container&#39;,
-            html: &#39;&lt;div class=&quot;no-contact-selected&quot;&gt;Select a contact from list &lt;/div&gt;&#39;,
-            reference: &#39;contact-no-selection&#39;
-        },
-        {
             xtype: &#39;contact-view&#39;
         },
         {
@@ -57,8 +55,9 @@ Ext.define(&#39;ContactApp.view.details.Details&#39;, {
     ],
 
 <span id='ContactApp-view-details-Details-property-listeners'>    listeners: {
-</span>        afterrender: &#39;initializeConfigs&#39;
+</span>        initialize: &#39;initializeConfigs&#39;
     }
+
 });</pre>
 </body>
 </html>

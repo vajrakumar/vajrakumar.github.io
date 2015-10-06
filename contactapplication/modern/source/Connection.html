@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='ContactApp-overrides-Connection'>/**
+</span> * Created by vajra on 29/09/15.
+ */
+
+
+Ext.define(&#39;ContactApp.overrides.Connection&#39;, {
+    override: &#39;Ext.data.Connection&#39;,
+
+<span id='ContactApp-overrides-Connection-method-request'>    request: function(options) {
+</span>        options = options || {};
+
+        var me = this,
+            requestOptions, request;
+
+        if (me.fireEvent(&#39;beforerequest&#39;, me, options) !== false) {
+            requestOptions = me.setOptions(options, options.scope || Ext.global);
+
+            request = me.createRequest(options, requestOptions);
+
+            //return request.start(requestOptions.data);
+            return request.start(requestOptions.data || request.data);
+        }
+
+        Ext.callback(options.callback, options.scope, [options, undefined, undefined]);
+
+        return Ext.Deferred.rejected([options, undefined, undefined]);
+    }
+});</pre>
+</body>
+</html>

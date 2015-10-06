@@ -16,58 +16,45 @@
 </head>
 <body onload="prettyPrint(); highlight();">
   <pre class="prettyprint lang-js"><span id='ContactApp-view-main-Main'>/**
-</span> * This class is the main view of the application for a classic toolkit.
+</span> * This is the main view of the Application for modern toolkit.
  *
- * This Component uses &#39;border&#39; layout. West Panel contains {@link ContactApp.view.list.List} Contact List and
- * center panel contains contact {@link ContactApp.view.details.Details} details container.
+ * This Component uses &#39;fit&#39; layout. It contains {@link ContactApp.view.list.List} Contact List and
+ *  {@link ContactApp.view.details.Details} details container.
  *
  * This container contains a {@link ContactApp.view.contact.ContactModel} ContactApp.view.contact.ContactModel as a contact view model
  * to perform 2-way data binding.
+ *
+ * By default list of contacts.
  */
-
 Ext.define(&#39;ContactApp.view.main.Main&#39;, {
     extend: &#39;Ext.Container&#39;,
+    alias: &#39;widget.app-main&#39;,
 
     requires: [
         &#39;ContactApp.view.contact.ContactModel&#39;,
         &#39;ContactApp.view.details.Details&#39;,
         &#39;ContactApp.view.list.List&#39;,
-        &#39;Ext.layout.container.Border&#39;,
-        &#39;Ext.layout.container.Fit&#39;,
-        &#39;Ext.plugin.Viewport&#39;,
-        &#39;Ext.tab.Panel&#39;
+        &#39;Ext.MessageBox&#39;,
+        &#39;Ext.tab.Panel&#39;,
+        &#39;Ext.Toast&#39;
     ],
 
-    alias: &#39;widget.app-main&#39;,
-
+<span id='ContactApp-view-main-Main-property-viewModel'>    viewModel: &#39;contact&#39;,
+</span>
 <span id='ContactApp-view-main-Main-property-layout'>    layout: {
-</span>        type: &#39;border&#39;
+</span>        type: &#39;fit&#39;
     },
 
-<span id='ContactApp-view-main-Main-property-plugins'>    plugins: &#39;viewport&#39;,
-</span>
-<span id='ContactApp-view-main-Main-property-viewModel'>    viewModel: &#39;contact&#39;,
+<span id='ContactApp-view-main-Main-property-fullscreen'>    fullscreen: true,
+</span><span id='ContactApp-view-main-Main-property-padding'>    padding: 0,
 </span>
 <span id='ContactApp-view-main-Main-property-items'>    items: [
 </span>        {
-            region: &#39;west&#39;,
-            xtype: &#39;contact-list&#39;,
-            minWidth: 200,
-            width: &#39;18%&#39;,
-            split: {
-                size: 5
-            }
+            xtype: &#39;contact-list&#39;
         },
         {
-            region: &#39;center&#39;,
-            layout: &#39;fit&#39;,
-            width: &#39;78%&#39;,
-            scrollable: true,
-            items: [
-                {
-                    xtype: &#39;contact-details&#39;
-                }
-            ]
+            xtype: &#39;contact-details&#39;,
+            hidden: true
         }
     ]
 });

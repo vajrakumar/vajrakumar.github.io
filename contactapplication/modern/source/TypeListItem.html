@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='ContactApp-view-details-TypeListItem'>/**
+</span> * This view is used to add or delete multi field contact details  like for phone number, website, email and important dates.
+ * This uses {@link Ext.grid.plugin.CellEditing} cell editing plugin.
+ */
+
+Ext.define(&#39;ContactApp.view.details.TypeListItem&#39;, {
+    extend: &#39;Ext.dataview.component.DataItem&#39;,
+    requires: [
+        &#39;ContactApp.validator.ContactValidator&#39;,
+        &#39;Ext.field.DatePicker&#39;,
+        &#39;Ext.field.Text&#39;,
+        &#39;Ext.layout.HBox&#39;
+    ],
+
+    alias: &#39;widget.contact-type-item&#39;,
+<span id='ContactApp-view-details-TypeListItem-property-reference'>    reference: &#39;contact-type-item&#39;,
+</span>
+<span id='ContactApp-view-details-TypeListItem-property-layout'>    layout: {
+</span>        type: &#39;hbox&#39;,
+        align: &#39;stretch&#39;
+    },
+
+<span id='ContactApp-view-details-TypeListItem-property-height'>    height: 35,
+</span>
+<span id='ContactApp-view-details-TypeListItem-property-items'>    items: [
+</span>        {
+            xtype: &#39;textfield&#39;,
+            itemId: &#39;contact-type&#39;,
+            clearIcon: false,
+            inputCls: &#39;contact-input-cls&#39;,
+            width: &#39;30%&#39;,
+            name: &#39;type&#39;,
+            listeners: {
+                change: function (comp) {
+                    var dataItem = comp.up(&#39;contact-type-item&#39;);
+                    dataItem.validateTextField.apply(dataItem, arguments);
+                }
+            }
+        },
+        {
+            xtype: &#39;textfield&#39;,
+            itemId: &#39;contact-value&#39;,
+            inputCls: &#39;contact-input-cls&#39;,
+            clearIcon: false,
+            hidden: true,
+            flex: .4,
+            name: &#39;value&#39;,
+            listeners: {
+                change: function (comp) {
+                    var dataItem = comp.up(&#39;contact-type-item&#39;);
+                    dataItem.validateTextField.apply(dataItem, arguments);
+                }
+            }
+        },
+        {
+            xtype: &#39;datepickerfield&#39;,
+            itemId: &#39;contact-date-value&#39;,
+            inputCls: &#39;contact-input-cls&#39;,
+            dateFormat: &#39;M d, Y&#39;,
+            hidden: true,
+            flex: .4,
+            clearIcon: false,
+            name: &#39;date-value&#39;,
+            listeners: {
+                change: function (comp) {
+                    var dataItem = comp.up(&#39;contact-type-item&#39;);
+                    dataItem.validateDateField.apply(dataItem, arguments);
+                }
+            }
+        },
+        {
+            xtype: &#39;button&#39;,
+            iconCls: &#39;fa fa-trash&#39;,
+            handler: function (comp) {
+                var record = comp.parent.getRecord(),
+                    dataview = comp.parent.getDataview();
+
+                dataview.getStore().remove(record);
+                dataview.refresh();
+            }
+        }
+    ],
+
+<span id='ContactApp-view-details-TypeListItem-method-updateRecord'>    /**
+</span>     * Sets value to the each fields of based on the contact type and hide or unhide components based on the viewType value of the {ContactApp.model.Details}
+     * model.
+     * @param {ContactApp.model.Details} record Contact detail.
+     */
+    updateRecord: function (record) {
+        if (record) {
+            var me = this,
+                type = record.get(&#39;viewType&#39;),
+                value = record.get(&#39;value&#39;),
+                dataview = me.getDataview(),
+                valueField = me.down(&#39;#contact-value&#39;),
+                dateField = me.down(&#39;#contact-date-value&#39;),
+                field;
+
+            if (type === &#39;date&#39;) {
+                dateField.setValue(value);
+                valueField.hide();
+                dateField.show();
+                field = dateField;
+            }
+            else {
+                valueField.setValue(value);
+                dateField.hide();
+                valueField.show();
+                field = dateField;
+            }
+
+            field.setInputCls(Ext.isEmpty(value) ? &#39;contact-error-cls&#39; : &#39;contact-input-cls&#39;);
+
+            me.down(&#39;#contact-type&#39;).setValue(record.get(&#39;type&#39;));
+            dataview.setHeight(dataview.getStore().getCount() * me.getHeight());
+
+            me.callParent(arguments);
+        }
+    },
+
+<span id='ContactApp-view-details-TypeListItem-method-validateTextField'>    /**
+</span>     * Validate Type and value fields for phone number, website and emails.
+     * @param {Ext.field.Text} comp Text fields for which validation to be applied.
+     */
+    validateTextField: function (comp) {
+        var name = comp.getName(),
+            record = this.getRecord(),
+            value = comp.getValue(),
+            validator = Ext.create(&#39;ContactApp.validator.ContactValidator&#39;),
+            isValid;
+
+        if (name === &#39;type&#39;) {
+            isValid = value.length &gt; 1;
+        }
+        else {
+            isValid = (value.length &gt; 1) &amp;&amp; (validator.validate(value + &#39;&#39;, record) === true);
+        }
+
+        record.set(name, value);
+
+        comp.setInputCls(isValid ? &#39;contact-input-cls&#39; : &#39;contact-error-cls&#39;);
+    },
+
+<span id='ContactApp-view-details-TypeListItem-method-validateDateField'>    /**
+</span>     * Set value field of the record only for datepicker field
+     * @param {Ext.field.DatePicker} comp Text fields for which validation to be applied.
+     */
+    validateDateField: function (comp, newVal) {
+        var record = this.getRecord();
+        record.set(&#39;value&#39;, newVal);
+    }
+});</pre>
+</body>
+</html>

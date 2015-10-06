@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='ContactApp-view-details-TypeView'>/**
+</span> * This view is used to add or delete multi field contact details List like for phone number, website, email and important dates.
+ * This uses {@link ContactApp.view.details.TypeListItem} Type list items.
+ */
+Ext.define(&#39;ContactApp.view.details.TypeView&#39;, {
+    extend: &#39;Ext.dataview.DataView&#39;,
+    requires: [
+      &#39;ContactApp.view.details.TypeListItem&#39;
+    ],
+
+    alias: &#39;widget.contact-type&#39;,
+<span id='ContactApp-view-details-TypeView-property-scrollable'>    scrollable: false,
+</span>    config: {
+<span id='ContactApp-view-details-TypeView-cfg-useComponents'>        useComponents: true,
+</span><span id='ContactApp-view-details-TypeView-cfg-defaultType'>        defaultType: &#39;contact-type-item&#39;
+</span>    }
+});</pre>
+</body>
+</html>

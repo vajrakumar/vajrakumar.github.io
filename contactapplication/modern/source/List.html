@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='ContactApp-view-list-List'>/**
+</span> *  This class is used to display list of available contacts in the {@link EExt.dataview.List} List view.
+ *  This view uses {@link ContactApp.view.list.ListController} ContactApp.view.list.ListController as a view controller.
+ *  This provides an ability to search contact using {@link ContactApp.ux.Search} Search field.
+ *  This view uses Single selection mode.
+ *
+ *  It is uses {@link Ext.grid.column.Template} template column to display contact name.
+ *
+ *  It uses {@link ContactApp.view.contact.ContactModel#store} Contact Store.
+ */
+Ext.define(&#39;ContactApp.view.list.List&#39;, {
+    extend: &#39;Ext.dataview.List&#39;,
+
+    requires: [
+        &#39;ContactApp.view.list.ListController&#39;,
+        &#39;Ext.field.Search&#39;
+    ],
+
+    alias: &#39;widget.contact-list&#39;,
+
+<span id='ContactApp-view-list-List-property-reference'>    reference: &#39;contact-list&#39;,
+</span>
+<span id='ContactApp-view-list-List-property-controller'>    controller: &#39;list&#39;,
+</span>
+<span id='ContactApp-view-list-List-property-ui'>    ui: &#39;round&#39;,
+</span><span id='ContactApp-view-list-List-property-pinHeaders'>    pinHeaders: false,
+</span>
+<span id='ContactApp-view-list-List-property-viewConfig'>    viewConfig: {
+</span>        emptyText: &#39;No Contacts&#39;
+    },
+
+<span id='ContactApp-view-list-List-property-itemTpl'>    itemTpl: [
+</span>        &#39;&lt;div class=&quot;modern-thumb-list&quot;&gt;&#39;,
+        &#39;&lt;div class=&quot;modern-thumb-list-img-container&quot;&gt;&#39;,
+        &#39;&lt;tpl if = &quot;Ext.isEmpty(values.imageUrl)&quot;&gt;&#39;,
+        &#39;&lt;i class=&quot;fa fa-user fa-3x&quot;&gt;&lt;/i&gt;&#39;,
+        &#39;&lt;tpl else&gt;&#39;,
+        &#39;&lt;img src=&quot;{imageUrl}&quot; width=&quot;40px&quot; height=&quot;40px&quot;/&gt;&#39;,
+        &#39;&lt;/tpl&gt;&#39;,
+        &#39;&lt;/div&gt;&#39;,
+        &#39;&lt;div class=&quot;modern-contact-name-list&quot;&gt;&#39;,
+        &#39;&lt;tpl if = &quot;!Ext.isEmpty(values.prefix)&quot;&gt;&#39;,
+        &#39;{prefix}.&amp;nbsp;&#39;,
+        &#39;&lt;/tpl&gt;&#39;,
+        &#39;{firstName}&amp;nbsp;{middleName}&amp;nbsp;{lastName}&#39;,
+        &#39;&lt;/div&gt;&#39;,
+        &#39;&lt;div class=&quot;modern-contact-org-desig-list&quot;&gt;&#39;,
+        &#39;&lt;tpl if = &quot;!Ext.isEmpty(values.designation)&quot;&gt;&#39;,
+        &#39;{designation}, &#39;,
+        &#39;&lt;/tpl&gt;&#39;,
+        &#39;&lt;tpl if = &quot;!Ext.isEmpty(values.organization)&quot;&gt;&#39;,
+        &#39;{organization}&#39;,
+        &#39;&lt;/tpl&gt;&#39;,
+        &#39;&lt;/div&gt;&#39;,
+        &#39;&lt;/div&gt;&#39;
+    ],
+<span id='ContactApp-view-list-List-property-items'>    items: [
+</span>        {
+            xtype: &#39;toolbar&#39;,
+            docked: &#39;top&#39;,
+            items: [
+                {
+                    xtype: &#39;searchfield&#39;,
+                    placeHolder: &#39;Search...&#39;,
+                    itemId: &#39;searchBox&#39;,
+                    listeners: {
+                        clearicontap: function (comp, input, eve) {
+                            comp.fireEvent(&#39;searchcontact&#39;, comp, comp.getValue(), eve);
+                        },
+                        keyup: function (comp, eve) {
+                            comp.fireEvent(&#39;searchcontact&#39;, comp, comp.getValue(), eve);
+                        },
+                        searchcontact: &#39;searchContact&#39;
+                    }
+                },
+                {
+                    xtype: &#39;spacer&#39;
+                },
+                {
+                    xtype: &#39;button&#39;,
+                    iconCls: &#39;fa fa-plus&#39;,
+                    ui: &#39;normal&#39;,
+                    handler: &#39;createNewContact&#39;
+                }
+            ]
+        }
+    ],
+
+<span id='ContactApp-view-list-List-property-bind'>    bind: {
+</span>        store: {
+            bindTo: &#39;{contacts}&#39;
+        }
+    },
+
+<span id='ContactApp-view-list-List-property-listeners'>    listeners: {
+</span>        itemtap: &#39;onContactSelect&#39;
+    }
+});</pre>
+</body>
+</html>

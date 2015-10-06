@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='ContactApp-view-list-ListController'>/**
+</span> *  This is the view controller of the Contact list view. This class handles all the add, delete and search operations of contact list.
+ */
+Ext.define(&#39;ContactApp.view.list.ListController&#39;, {
+    extend: &#39;Ext.app.ViewController&#39;,
+
+    requires: [
+        &#39;ContactApp.model.Contact&#39;
+    ],
+
+    alias: &#39;controller.list&#39;,
+
+<span id='ContactApp-view-list-ListController-event-deletecontact'>    /**
+</span>     * @event deletecontact
+     * Global event of the controller. This event is fired when contact has to be deleted form contact list.
+     * @param {ContactApp.model.Contact} record Contact that has to be removed.
+     */
+
+<span id='ContactApp-view-list-ListController-event-addcontacttolistonsave'>    /**
+</span>     * @event addcontacttolistonsave
+     * Global event of the controller. This event is fired when the contact is saved and added to the contactlist store.
+     * @param {ContactApp.model.Contact} record Contact that has to be added.
+     */
+
+    listen: {
+        controller: {
+            &#39;*&#39;: {
+                &#39;deletecontact&#39;: &#39;deleteContact&#39;,
+                &#39;addcontacttolistonsave&#39;: &#39;addContactToListOnSave&#39;
+            }
+        }
+    },
+
+<span id='ContactApp-view-list-ListController-method-createNewContact'>    /**
+</span>     * Create new contact and fires a global event {@ContactApp.view.details.DetailsController newcontactform} `newcontactform`
+     * to display form to fill new contact details.
+     */
+    createNewContact: function(){
+        var me = this,
+            newContact = Ext.create(&#39;ContactApp.model.Contact&#39;),
+            viewModel = me.getViewModel();
+
+        this.getView().deselectAll();
+
+        viewModel.set(&#39;selectedContact&#39;, newContact);
+
+        me.fireEvent(&#39;newcontactform&#39;, newContact, false);
+    },
+
+<span id='ContactApp-view-list-ListController-method-deleteContact'>    /**
+</span>     * This method is used to delete contact from the contact list.
+     * @param {ContactApp.model.Contact} record The contact that has to be deleted.
+     */
+    deleteContact: function(record){
+
+        var me = this,
+            contactList = this.getView();
+
+        contactList.mask({
+            xtype: &#39;loadmask&#39;,
+            message: &#39;Deleting Contact...&#39;
+        });
+
+        record.erase({
+            success: function (record, operation) {
+                contactList.getStore().remove(record);
+                contactList.deselectAll();
+                contactList.unmask();
+				Ext.toast(&#39;Contact Deleted Successfully... &#39;);
+            },
+            failure: function (record, operation) {
+                contactList.unmask();
+				Ext.toast(&#39;Deleting contact failed...&#39;);
+            }
+        });
+    },
+
+<span id='ContactApp-view-list-ListController-method-addContactToListOnSave'>    /**
+</span>     * Add new contact to the contact list.
+     * @param {ContactApp.model.Contact} record The contact that has to be added.
+     */
+    addContactToListOnSave: function(record) {
+
+        var contactList = this.getView();
+
+        contactList.getStore().add(record);
+        contactList.setSelection(record);
+    },
+<span id='ContactApp-view-list-ListController-method-onContactSelect'>    /**
+</span>     * Displays contact summary view on tap of any contact in list.
+     * @param {ContactApp.view.List} comp Contact List View
+     * @param {Number} index Selected row index
+     * @param {Object} target Selected row dom element
+     * @param {ContactApp.model.Contact} record The contact selected.
+     */
+    onContactSelect: function(comp, index, target, record){
+        this.fireEvent(&#39;viewcontact&#39;, record, true);
+    },
+
+<span id='ContactApp-view-list-ListController-method-searchContact'>    /**
+</span>     * Search/filter contact based on the value typed in the search field.
+     * @param {Ext.field.Search} comp Search Field Component
+     * @param {String} value Contact name to be searched.
+     */
+    searchContact: function(comp, value){
+        var me = this,
+            contactList = me.getView(),
+            store = contactList.getStore(),
+            selRec = contactList.getSelection();
+
+        store.clearFilter();
+
+        if(!Ext.isEmpty(Ext.String.trim(value))) {
+            value = value.toLowerCase();
+            store.filterBy(function (rec) {
+                var data = rec.getData(),
+                    name = (data.prefix ? (data.prefix + &#39;. &#39;) : &#39;&#39;) + data.firstName + &#39; &#39; + (data.middleName ? (data.middleName + &#39; &#39;) : &#39; &#39;) + (data.lastName ? data.lastName : &#39;&#39;);
+
+                return name.toLowerCase().indexOf(value.toLowerCase()) &gt; -1;
+            });
+        }
+
+        // Clear the selection if filtered list doesn&#39;t have it.
+        if (selRec &amp;&amp; store.indexOf(selRec[0]) === -1) {
+            contactList.deselectAll();
+        }
+    }
+});</pre>
+</body>
+</html>
