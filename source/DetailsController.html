@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='ContactApp-view-details-DetailsController'>/**
+</span> *  This is a view controller for the {@link ContactApp.view.details.Details} Details view.
+ *  This class implements most of the business logic and server side calls to perform contact add/update and delete operations.
+ */
+
+Ext.define(&#39;ContactApp.view.details.DetailsController&#39;, {
+    extend: &#39;Ext.app.ViewController&#39;,
+    alias: &#39;controller.details&#39;,
+
+    requires: [
+        &#39;ContactApp.model.Details&#39;,
+        &#39;ContactApp.utils.Helper&#39;,
+        &#39;ContactApp.utils.UrlMapping&#39;
+    ],
+
+
+    config: {
+<span id='ContactApp-view-details-DetailsController-cfg-status'>        /**
+</span>         * @cfg {String} status
+         *  Indicates current contact is new Contact. By default it&#39;s value is `edit`
+         *  `edit` indicates the contact is in edit mode
+         *  `add` indicates the contact is new contact and in add mode.
+         *
+         */
+        status: &#39;edit&#39;,
+<span id='ContactApp-view-details-DetailsController-cfg-selectedContact'>        /**
+</span>         * @cfg {ContactApp.model.Contact} selectedContact
+         *  The selected contact
+         */
+        selectedContact: null,
+<span id='ContactApp-view-details-DetailsController-cfg-contactForm'>        /**
+</span>         * @cfg {ContactApp.view.details.Form} contactForm
+         * Reference for Contact Form
+         */
+        contactForm: null,
+<span id='ContactApp-view-details-DetailsController-cfg-contactView'>        /**
+</span>         * @cfg {ContactApp.view.details.View} contactView
+         * Reference for Contact Summary view
+         */
+        contactView: null,
+<span id='ContactApp-view-details-DetailsController-cfg-noSelectionView'>        /**
+</span>         * @cfg {Ext.Container} noSelectionView
+         * Reference for container which displays no selection message.
+         */
+        noSelectionView: null
+    },
+
+<span id='ContactApp-view-details-DetailsController-property-listen'>    listen: {
+</span>        controller: {
+            &#39;*&#39;: {
+<span id='ContactApp-view-details-DetailsController-event-viewcontact'>                /**
+</span>                 * @event viewcontact
+                 * Global view controller event to view contact summary details.
+                 * @param {ContactApp.model.Contact} contact Selected contact.
+                 */
+                &#39;viewcontact&#39;: &#39;displayContactView&#39;,
+<span id='ContactApp-view-details-DetailsController-event-newcontactform'>                /**
+</span>                 * @event newcontactform
+                 * Global view controller event to fill the details of newly created contact.
+                 */
+                &#39;newcontactform&#39;: &#39;newContactForm&#39;,
+<span id='ContactApp-view-details-DetailsController-event-displaynoselection'>                /**
+</span>                 * @event displaynoselection
+                 * Global view Controller event to dislpay no selection message.
+                 */
+                &#39;displaynoselection&#39;: &#39;showNoSelectionView&#39;
+            }
+        }
+    },
+
+<span id='ContactApp-view-details-DetailsController-method-newContactForm'>    /**
+</span>     * Display form to enter details of newly created Contact and sets status to `add`
+     * @param {ContactApp.model.Contact} record Newly added contact
+     */
+    newContactForm: function (record) {
+
+        var me = this,
+            form = me.getContactForm(),
+            associations = record.associations,
+            query = &#39;[xtype=&quot;contact-type&quot;]&#39;,
+            key, contactType;
+
+
+        for (key in associations) {
+            contactType = form.down(query + &#39;[contactType=\&#39;&#39; + key + &#39;\&#39;]&#39;);
+            contactType.setStore(record[key]());
+        }
+
+        me.setSelectedContact(record);
+        me.setStatus(&#39;add&#39;);
+
+        me.showContactForm();
+        form.down(&#39;[name= &quot;prefix&quot;]&#39;).focus();
+    },
+
+<span id='ContactApp-view-details-DetailsController-method-displayContactView'>    /**
+</span>     * Display contact summary details on selection of contact from contact list.
+     * @param {ContactApp.model.Contact} selected contact
+     */
+    displayContactView: function (record) {
+        this.setSelectedContact(record);
+        this.showContactView();
+    },
+
+<span id='ContactApp-view-details-DetailsController-method-editContact'>    /**
+</span>     * Displays contact form to edit contact details.
+     */
+    editContact: function() {
+        this.showContactForm();
+    },
+
+<span id='ContactApp-view-details-DetailsController-method-deleteContact'>    /**
+</span>     * Deletes selected contact by fireing {@link ContactApp.view.list.ListController#deletecontact} `deletecontact` event.
+     */
+    deleteContact: function () {
+        this.fireEvent(&#39;deletecontact&#39;, this.getSelectedContact());
+    },
+
+<span id='ContactApp-view-details-DetailsController-method-addNewContactDetail'>    /**
+</span>     * Add new contact details like phone Number, emails, urls and important dates.
+     * @param {Ext.Button} comp Button Component
+     */
+    addNewContactDetail: function (comp) {
+
+        var me = this,
+            grid = comp.up(&#39;grid&#39;),
+            store = grid.getStore(),
+            records = store.getRange(),
+            i = 0,
+            data, record;
+
+        while (i &lt; records.length) {
+            data = records[i].getData();
+
+            if (Ext.isEmpty(data.type) || Ext.isEmpty(data.value)) {
+                //Ext.Msg.alert(&#39;Error Message&#39;, &#39;Already some of the fields are empty&#39;);
+                return;
+            }
+            i++;
+        }
+
+        record = Ext.create(&#39;ContactApp.model.Details&#39;);
+        record.set(&#39;viewType&#39;, grid.type);
+
+        store.add(record);
+
+        grid.getPlugin(&#39;contact-type-cell-edit-plugin&#39;).startEdit(record, 0);
+    },
+
+<span id='ContactApp-view-details-DetailsController-method-initializeConfigs'>    /**
+</span>     * Initialize all config options
+     */
+    initializeConfigs: function () {
+        this.setContactForm(this.lookupReference(&#39;contact-form&#39;));
+        this.setContactView(this.lookupReference(&#39;contact-view&#39;));
+        this.setNoSelectionView(this.lookupReference(&#39;contact-no-selection&#39;));
+    },
+
+<span id='ContactApp-view-details-DetailsController-method-showContactForm'>    /**
+</span>     * Display Form.
+     */
+    showContactForm: function () {
+        this.getView().setActiveItem(this.getContactForm());
+    },
+
+<span id='ContactApp-view-details-DetailsController-method-showContactView'>    /**
+</span>     * Display Contact summary detals and set status to edit mode.
+     */
+    showContactView: function () {
+        this.setStatus(&#39;edit&#39;);
+        this.getView().setActiveItem(this.getContactView());
+    },
+
+<span id='ContactApp-view-details-DetailsController-method-showNoSelectionView'>    /**
+</span>     * Displays no selection message when no contact is selected.
+     */
+    showNoSelectionView: function () {
+        this.getView().setActiveItem(this.getNoSelectionView());
+    },
+
+<span id='ContactApp-view-details-DetailsController-method-saveContact'>    /**
+</span>     * Save contact to database.
+     * For new contact both personal details and contact details are saved in one request.
+     * For existing contact only personal information is saved and to save contact details other method
+     * {@link ContactApp.view.details.DetailsController#saveContactDetails} `saveContactDetails method is invoked.
+     */
+    saveContact: function () {
+
+        var me = this,
+            form = me.getContactForm(),
+            status = me.getStatus(),
+            record = me.getSelectedContact();
+
+        if (form.isValid()) {
+
+            if (status === &#39;edit&#39;) {
+                record.set(form.getValues());
+            }
+
+            Ext.getBody().mask(&#39;Saving...&#39;);
+
+            record.save({
+                success: function (rec, operation) {
+                    var response = Ext.JSON.decode(operation.getResponse().responseText),
+                        association = record.associations,
+                        key, store;
+
+                    record.set(response);
+
+                    if (status === &#39;edit&#39;) {
+                        // When contact is in edit mode
+                        me.saveContactType(record);
+                    }
+                    else {
+                        //New Contact save
+                        for (key in association) {
+                            store = record[key]();
+                            store.loadRawData(response[key]);
+                        }
+
+                        record.commit();
+                        me.setSelectedContact(record);
+                        me.setStatus(&#39;edit&#39;);
+
+                        me.fireEvent(&#39;addcontacttolistonsave&#39;, record);
+
+                        Ext.getBody().unmask();
+                    }
+                },
+                failure: function () {
+
+                }
+            })
+        }
+    },
+
+<span id='ContactApp-view-details-DetailsController-method-saveContactType'>    /**
+</span>     * Save contact details to database.
+     */
+    saveContactType: function (record) {
+        var me = this,
+            association = record.associations,
+            isComplete = true,
+            completeStatus = {},
+            modifiedStores = {},
+            key, store;
+
+        for (key in association) {
+
+            store = record[key]();
+
+            if (ContactApp.utils.Helper.isStoreModified(store)) {
+                isComplete = false;
+                completeStatus[key] = false;
+                modifiedStores[key] = store;
+            }
+        }
+
+        if (isComplete) {
+            Ext.getBody().unmask();
+            me.showContactView();
+        }
+        else {
+            for (key in completeStatus) {
+                modifiedStores[key].sync({
+                    storeName: key,
+                    success: function (batch, operations) {
+                        completeStatus[operations.storeName] = true;
+
+                        if (me.checkCompleteStatus(completeStatus)) {
+
+                            Ext.getBody().unmask();
+                            me.showContactView();
+                        }
+                    },
+                    failure: function (batch, operation) {
+                        Ext.getBody().unmask();
+                    }
+                });
+            }
+        }
+    },
+
+<span id='ContactApp-view-details-DetailsController-method-checkCompleteStatus'>    /**
+</span>     * Check different contact details are saved.
+     * This method traverse all the properties of the object and checks all the properties are set to true.
+     * @param {Object} completeStatus Object for which the complet status has to be checked.
+     * @returns {boolean} true/false Return true if all the properties of the contact are set to true.
+     */
+    checkCompleteStatus: function (completeStatus) {
+        var isComplete = true,
+            key;
+
+        for (key in completeStatus) {
+            if (completeStatus[key] === false) {
+                isComplete = false;
+                break;
+            }
+        }
+
+        return isComplete;
+    },
+
+<span id='ContactApp-view-details-DetailsController-method-rejectChanges'>    /**
+</span>     * Reset the modified changes when form is modified and not saved.
+     */
+    rejectChanges: function() {
+        var me = this,
+            record = me.getSelectedContact(),
+            associations = record.associations,
+            key;
+
+        if (me.getStatus() === &#39;edit&#39;) {
+            for (key in associations) {
+                record[key]().rejectChanges();
+            }
+
+            record.reject();
+            me.showContactView();
+        }
+        else {
+            record.destroy();
+            me.showNoSelectionView();
+            me.setStatus(null);
+            me.setSelectedContact(null);
+        }
+    },
+
+<span id='ContactApp-view-details-DetailsController-method-uploadAvatar'>    /**
+</span>     * Upload Profile picture (Avatar).
+     * @param {ContactApp.view.details.Avatar} form Form object for upload file.
+     */
+    uploadAvatar: function(form){
+        var me = this;
+
+        form.mask(&#39;loading...&#39;);
+        form.submit({
+            url: ContactApp.utils.UrlMapping.avatarUpload,
+            method: &#39;Post&#39;,
+            success: function (frm, eopt) {
+                var response = Ext.JSON.decode(eopt.response.responseText),
+                    record = me.getSelectedContact();
+
+                record.set(&#39;imageUrl&#39;, response.imageUrl);
+                form.unmask();
+            },
+            failure: function (form, eopt) {
+                form.unmask();
+            }
+        });
+    }
+});</pre>
+</body>
+</html>

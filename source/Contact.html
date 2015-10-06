@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='ContactApp-model-Contact'>/**
+</span> *  This model is used to hold the contact&#39;s personal information.
+ */
+Ext.define(&#39;ContactApp.model.Contact&#39;, {
+    extend: &#39;ContactApp.model.Base&#39;,
+    requires: [
+        &#39;ContactApp.model.Details&#39;,
+        &#39;ContactApp.utils.UrlMapping&#39;,
+        &#39;Ext.data.proxy.Rest&#39;,
+        &#39;Ext.data.reader.Json&#39;,
+        &#39;Ext.data.writer.Json&#39;
+    ],
+
+<span id='ContactApp-model-Contact-property-idProperty'>    idProperty: &#39;id&#39;,
+</span>
+<span id='ContactApp-model-Contact-property-fields'>    fields: [
+</span><span id=''>    /**
+</span>     * Identifier and primary key
+     */
+<span id='-property-type'><span id='-property-name'>        {name: &#39;id&#39;, type: &#39;int&#39;},
+</span></span>
+<span id=''>    /**
+</span>     * Prefix used for the contact user name
+     */
+<span id='-property-type'><span id='-property-name'>        {name: &#39;prefix&#39;, type: &#39;string&#39;},
+</span></span><span id=''>    /**
+</span>     * First name (Mandatory)
+     */
+        {
+<span id='-property-name'>            name: &#39;firstName&#39;,
+</span><span id='-property-type'>            type: &#39;string&#39;,
+</span><span id='-property-default'>            default: &#39;New Contact&#39;,
+</span><span id='-property-validators'>            validators: {
+</span>                type: &#39;length&#39;,
+                min: 1
+            }
+        },
+<span id=''>    /**
+</span>     * Middle name (optional)
+     */
+<span id='-property-type'><span id='-property-name'>        {name: &#39;middleName&#39;, type: &#39;string&#39;},
+</span></span><span id=''>    /**
+</span>     * Last name (optional)
+     */
+<span id='-property-type'><span id='-property-name'>        {name: &#39;lastName&#39;, type: &#39;string&#39;},
+</span></span><span id=''>    /**
+</span>     * Organization name (optional)
+     */
+<span id='-property-type'><span id='-property-name'>        {name: &#39;organization&#39;, type: &#39;string&#39;},
+</span></span><span id=''>    /**
+</span>     * Designation (optional)
+     */
+<span id='-property-type'><span id='-property-name'>        {name: &#39;designation&#39;, type: &#39;string&#39;},
+</span></span><span id=''>    /**
+</span>     * Street address (optional)
+     */
+
+<span id='-property-type'><span id='-property-name'>        {name: &#39;streetAddress&#39;, type: &#39;string&#39;},
+</span></span><span id=''>    /**
+</span>     * Extended address (optional)
+     */
+<span id='-property-type'><span id='-property-name'>        {name: &#39;extendedAddress&#39;, type: &#39;string&#39;},
+</span></span><span id=''>    /**
+</span>     * City  (optional)
+     */
+<span id='-property-type'><span id='-property-name'>        {name: &#39;city&#39;, type: &#39;string&#39;},
+</span></span><span id=''>    /**
+</span>     * State  (optional)
+     */
+<span id='-property-type'><span id='-property-name'>        {name: &#39;state&#39;, type: &#39;string&#39;},
+</span></span><span id=''>    /**
+</span>     * Country  (optional)
+     */
+<span id='-property-type'><span id='-property-name'>        {name: &#39;country&#39;, type: &#39;string&#39;},
+</span></span><span id=''>    /**
+</span>     * Pincode (optional)
+     */
+<span id='-property-type'><span id='-property-name'>        {name: &#39;pincode&#39;, type: &#39;int&#39;},
+</span></span><span id=''>    /**
+</span>     * avatar Url
+     */
+<span id='-property-type'><span id='-property-name'>        {name: &#39;imageUrl&#39;, type: &#39;string&#39;}
+</span></span>    ],
+
+<span id='-property-hasMany'>    /**
+</span>     * Associated Stores
+     */
+    hasMany: [
+        {
+            name: &#39;phoneNumbers&#39;,
+            model: &#39;ContactApp.model.Details&#39;,
+            primaryKey: &#39;id&#39;,
+            foreignKey: &#39;contactId&#39;,
+            associationKey: &#39;phoneNumbers&#39;
+        },
+        {
+            name: &#39;emails&#39;,
+            model: &#39;ContactApp.model.Details&#39;,
+            primaryKey: &#39;id&#39;,
+            foreignKey: &#39;contactId&#39;,
+            associationKey: &#39;emails&#39;
+        },
+        {
+            name: &#39;urls&#39;,
+            model: &#39;ContactApp.model.Details&#39;,
+            primaryKey: &#39;id&#39;,
+            foreignKey: &#39;contactId&#39;,
+            associationKey: &#39;urls&#39;
+        },
+        {
+            name: &#39;dates&#39;,
+            model: &#39;ContactApp.model.Details&#39;,
+            primaryKey: &#39;id&#39;,
+            foreignKey: &#39;contactId&#39;,
+            associationKey: &#39;dates&#39;
+        }
+    ],
+<span id='ContactApp-model-Contact-property-proxy'>    proxy: {
+</span>        url: ContactApp.utils.UrlMapping.contactList,
+        type: &#39;rest&#39;,
+        reader: {
+            type: &#39;json&#39;,
+            rootProperty: &#39;data&#39;
+        },
+        writer: {
+            type: &#39;json&#39;,
+
+<span id='-property-transform'>            /**
+</span>             * Custom transform function.
+             * If new record then associated store data is also returned else only current record data is returned.
+             */
+            transform: {
+                fn: function (data, operation) {
+                    var record = operation.getRecords()[0];
+
+                    // check for new record.
+                    if (record.get(&#39;id&#39;) &lt; 0) {
+                        data = record.getData(true);
+                    }
+
+                    return data;
+                }
+            }
+        }
+    }
+
+});</pre>
+</body>
+</html>

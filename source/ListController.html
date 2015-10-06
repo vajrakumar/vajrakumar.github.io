@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='ContactApp-view-list-ListController'>/**
+</span> *  This is the view controller of the {@ContactApp.view.list.List} Contact list view.
+ *  This class handles all the add, delete and search operations of contact list.
+ */
+
+Ext.define(&#39;ContactApp.view.list.ListController&#39;, {
+    extend: &#39;Ext.app.ViewController&#39;,
+
+    requires: [
+        &#39;ContactApp.model.Contact&#39;
+    ],
+
+    alias: &#39;controller.list&#39;,
+
+<span id='ContactApp-view-list-ListController-property-listen'>    listen: {
+</span>        controller: {
+            &#39;*&#39;: {
+<span id='ContactApp-view-list-ListController-event-deletecontact'>                /**
+</span>                 * @event deletecontact
+                 * Global event of the controller. This event is fired when contact has to be deleted form contact list.
+                 * @param {ContactApp.model.Contact} record Contact that has to be removed.
+                 */
+                &#39;deletecontact&#39;: &#39;deleteContact&#39;,
+
+<span id='ContactApp-view-list-ListController-event-addcontacttolistonsave'>                /**
+</span>                 * @event addcontacttolistonsave
+                 * Gloabal event of the controller. This event is fired when contact has to be added to the contact list.
+                 * @param {ContactApp.model.Contact} record Contact that has to be added to the contact list.
+                 */
+                &#39;addcontacttolistonsave&#39;: &#39;addContactToListOnSave&#39;
+            }
+        }
+    },
+
+<span id='ContactApp-view-list-ListController-method-createNewContact'>    /**
+</span>     * Create new contact and fires global view controller event {@link ContactApp.view.details.DetailsController newContactForm} `newcontactform`
+     * to display form to fill new contact details.
+     */
+    createNewContact: function () {
+        var me = this,
+            newContact = Ext.create(&#39;ContactApp.model.Contact&#39;),
+            viewModel = me.getViewModel();
+
+        me.getView().getSelectionModel().deselectAll();
+
+        viewModel.set(&#39;selectedContact&#39;, newContact);
+
+        me.fireEvent(&#39;newcontactform&#39;, newContact, false);
+    },
+
+<span id='ContactApp-view-list-ListController-method-deleteContact'>    /**
+</span>     * Delete contact from the contact list.
+     * @param {ContactApp.model.Contact} record Contact to be deleted from the contact list.
+     */
+    deleteContact: function (record) {
+
+        var me = this,
+            data = record.getData(),
+            name = (data.prefix ? (data.prefix + &#39;. &#39;) : &#39;&#39;) + data.firstName + &#39; &#39; + (data.middleName ? (data.middleName + &#39; &#39;) : &#39; &#39;) + (data.lastName ? data.lastName : &#39;&#39;);
+
+        Ext.Msg.show({
+            icon: Ext.Msg.QUESTION,
+            buttons: Ext.Msg.YESNO,
+            title: &#39;Delete Confirmation&#39;,
+            msg: &#39;Do you want to delete contact &#39; + name,
+            fn: function (status) {
+                if (&#39;yes&#39; === status) {
+                    Ext.getBody().mask(&#39;Deleting contact &quot;&#39; + name + &#39;&quot;....&#39;);
+                    record.erase({
+                        success: function (record, operation) {
+                            me.getView().getStore().remove(record);
+                            me.fireEvent(&#39;showemptymessage&#39;);
+                            Ext.getBody().unmask();
+                        },
+                        failure: function (record, operation) {
+                            Ext.getBody().unmask();
+                        }
+                    });
+                }
+            }
+        });
+    },
+
+<span id='ContactApp-view-list-ListController-method-addContactToListOnSave'>    /**
+</span>     * Adds newly created contact to contact list.
+     * @param {ContactApp.model.Contact} record Contact to be added to the contact list.
+     */
+    addContactToListOnSave: function (record) {
+        var contactList = this.getView();
+
+        contactList.getStore().add(record);
+        contactList.setSelection(record);
+    },
+
+<span id='ContactApp-view-list-ListController-method-onContactSelect'>    /**
+</span>     * This method is invoked when contact is selected.
+     * @param {ContacatApp.view.list.List} view Contact list view.
+     * @param record {ContactApp.model.Contact) record Selected contact.
+     */
+    onContactSelect: function (view, record) {
+
+        if (record.length === 0) {
+            this.fireEvent(&#39;displaynoselection&#39;);
+        }
+        else {
+            this.fireEvent(&#39;viewcontact&#39;, record[0], true);
+        }
+    },
+
+<span id='ContactApp-view-list-ListController-method-searchContact'>    /**
+</span>     * Search contact form the contact list
+     * @param {ContactApp.ux.Search} comp Search field
+     */
+    searchContact: function (comp) {
+
+        var me = this,
+            contactList = me.getView(),
+            store = contactList.getStore(),
+            value = comp.getValue().toLowerCase(),
+            selRec = contactList.getSelection();
+
+        store.clearFilter();
+
+        if (!Ext.isEmpty(Ext.String.trim(value))) {
+            store.filterBy(function (rec) {
+                var data = rec.getData(),
+                    name = (data.prefix ? (data.prefix + &#39;. &#39;) : &#39;&#39;) + data.firstName + &#39; &#39; + (data.middleName ? (data.middleName + &#39; &#39;) : &#39; &#39;) + (data.lastName ? data.lastName : &#39;&#39;);
+
+                return name.toLowerCase().indexOf(value.toLowerCase()) &gt; -1;
+            });
+        }
+        // Clear selection if searched result doesn&#39;t contains selected contact.
+        if (store.indexOf(selRec[0]) === -1) {
+            contactList.getSelectionModel().deselectAll();
+        }
+    }
+});</pre>
+</body>
+</html>

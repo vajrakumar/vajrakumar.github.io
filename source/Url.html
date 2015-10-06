@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='ContactApp-validator-Url'>/**
+</span> * This class is used to validate URL fields
+ */
+Ext.define(&#39;ContactApp.validator.Url&#39;, {
+
+    extend: &#39;Ext.data.validator.Format&#39;,
+
+    alias: &#39;data.validator.url&#39;,
+
+<span id='ContactApp-validator-Url-property-type'>    type: &#39;url&#39;,
+</span>
+    config: {
+<span id='ContactApp-validator-Url-cfg-Message'>        /**
+</span>         * @cfg {string} Message to be displayed of invalid url
+         */
+        message: &#39;It is not a valid url&#39;,
+
+<span id='ContactApp-validator-Url-cfg-matcher'>        matcher: /(((^https?)|(^ftp)):\/\/((([\-\w]+\.)+\w{2,3}(\/[%\-\w]+(\.\w{2,})?)*(([\w\-\.\?\\\/+@&amp;#;`~=%!]*)(\.\w{2,})?)*)|(localhost|LOCALHOST))\/?)/i
+</span>    }
+});</pre>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='ContactApp-view-details-Avatar'>/**
+</span> *  This component is used to show profile picture(Avatar) and on click of the image or glyph icon to upload file to profile picture.
+ */
+Ext.define(&#39;ContactApp.view.details.Avatar&#39;, {
+    extend: &#39;Ext.form.Panel&#39;,
+
+    requires: [
+        &#39;Ext.container.Container&#39;,
+        &#39;Ext.form.field.File&#39;
+    ],
+
+    alias: &#39;widget.avatar&#39;,
+
+<span id='ContactApp-view-details-Avatar-property-bodyStyle'>    bodyStyle: {
+</span>        background: &#39;transparent&#39;
+    },
+
+<span id='ContactApp-view-details-Avatar-property-items'>    items: [
+</span>        {
+<span id='ContactApp-view-details-Avatar-property-xtype'>            /**
+</span>             * Container field to display profile picture (avatar). It uses template to display image if profile picture exists else
+             * displays glyph icon.
+             */
+            xtype: &#39;container&#39;,
+            margin: 10,
+            width: 135,
+            height: 135,
+            tpl: Ext.create(&#39;Ext.XTemplate&#39;, [
+                &#39;&lt;div class=&quot;thumb-wrap&quot; &gt;&#39;,
+                &#39;&lt;div class=&quot;thumb&quot;&gt;&#39;,
+                &#39;&lt;tpl if = &quot;Ext.isEmpty(values.imageUrl)&quot;&gt;&#39;,
+                &#39;&lt;i class=&quot;fa fa-user fa-4x&quot;&gt;&lt;/i&gt;&#39;,
+                &#39;&lt;tpl else&gt;&#39;,
+                &#39;&lt;img src=&quot;{imageUrl}&quot;  onload=&quot;ContactApp.utils.Helper.scaleImage(this, 120, 120, false)&quot; /&gt;&#39;,
+                &#39;&lt;/tpl&gt;&#39;,
+                &#39;&lt;div style=&quot;width:30px; height: 30px;display: none&quot;&gt;&lt;i class=&quot;fa fa-close&quot;&gt;&lt;/i&gt;&lt;/div&gt;&#39;,
+                &#39;&lt;div style=&quot;width:30px; height: 30px;display: none;&quot;&gt;&lt;i class=&quot;fa fa-pencil&quot;&gt;&lt;/i&gt;&lt;/div&gt;&#39;,
+                &#39;&lt;/div&gt;&#39;,
+                &#39;&lt;/div&gt;&#39;
+            ]),
+            reference: &#39;avatar-viewer&#39;,
+            bind: {
+                data: {
+                    bindTo: &#39;{selectedContact}&#39;,
+                    deep: true
+                }
+            },
+            listeners: {
+                afterrender: function (comp) {
+                    var from = comp.up(&#39;avatar&#39;);
+                    comp.getEl().on({
+                        click: function () {
+                            from.showFileViewer();
+                        },
+                        mouseover: function () {
+
+                        },
+                        mouseout: function () {
+
+                        }
+                    })
+                },
+                uploadavatar: Ext.emptyFn
+            }
+        },
+        {
+<span id='ContactApp-view-details-Avatar-property-xtype'>            /**
+</span>             * File field used to upload file on
+             */
+            xtype: &#39;filefield&#39;,
+            reference: &#39;avataruploader&#39;,
+            listeners: {
+                change: function (comp, value) {
+                    var form = comp.up(&#39;avatar&#39;);
+                    if (!Ext.isEmpty(value)) {
+                        if (/(.jpg|.jpeg|.png|.gif)$/ig.test(value)) {
+                            form.fireEvent(&#39;onfileselect&#39;, form);
+                        }
+                        else {
+                            Ext.Msg.show({
+                                title: &#39;File Format error&#39;,
+                                message: &#39;Invalid file format, please upload files with the formats JPEG, JPG, PNG and GIF&#39;,
+                                buttons: Ext.Msg.OK,
+                                icon: Ext.Msg.ERROR
+                            });
+                            comp.setValue(&#39;&#39;);
+                        }
+                    }
+                }
+            },
+            name: &#39;avatar&#39;,
+            hidden: true
+        }
+    ],
+
+<span id='ContactApp-view-details-Avatar-property-listeners'>    listeners: {
+</span><span id='ContactApp-view-details-Avatar-event-onfileselect'>        /**
+</span>         * @event onfileselect
+         * @param {ContactApp.view.details.Avatar} form Form used to upload perform file upload.
+         */
+        onfileselect: Ext.emptyFn
+    },
+
+<span id='ContactApp-view-details-Avatar-method-showFileViewer'>    /**
+</span>     * Shows file browse menu.
+     */
+    showFileViewer: function () {
+
+        var me = this,
+            form = me.getForm(),
+            fileField = form.findField(&#39;avatar&#39;);
+
+        fileField.fileInputEl.dom.click();
+    }
+});</pre>
+</body>
+</html>

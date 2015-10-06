@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='ContactApp-view-contact-ContactModel'>/**
+</span> * This class is the view Model for contact view of the application
+ */
+Ext.define(&#39;ContactApp.view.contact.ContactModel&#39;, {
+    extend: &#39;Ext.app.ViewModel&#39;,
+    alias: &#39;viewmodel.contact&#39;,
+
+    requires: [
+        &#39;ContactApp.model.Contact&#39;
+    ],
+
+<span id='ContactApp-view-contact-ContactModel-property-stores'>    stores: {
+</span><span id='ContactApp-view-contact-ContactModel-property-contacts'>        /**
+</span>         * This store is used to hold list of contact&#39;s details.
+         */
+        contacts: {
+            model: &#39;ContactApp.model.Contact&#39;,
+            autoLoad: true
+        }
+    },
+
+<span id='ContactApp-view-contact-ContactModel-property-formulas'>    formulas: {
+</span><span id='ContactApp-view-contact-ContactModel-property-selectedContact'>        /**
+</span>         *  Holds the selected Contact record from the contact list.
+         */
+        selectedContact: {
+            bind: {
+                bindTo: &#39;{contact-list.selection}&#39;,
+                deep: true
+            },
+            get: function(contact){
+                return contact
+            }
+        }
+    }
+});</pre>
+</body>
+</html>
